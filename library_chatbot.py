@@ -157,9 +157,8 @@ def initialize_components(selected_model):
     return rag_chain
 
 # Streamlit UI
-st.header("국립부경대 도서관 규정 Q&A 챗봇 💬 📚")
-st.markdown("---")
-
+st.header("MoodBite 🤖🍽️")
+st.markdown("### 사용자 대화를 분석해 기분을 짐작하고 그에 맞는 음식을 추천해주는 스마트 챗봇. 즐거운 기분에는 상큼한 디저트를, 지친 기분에는 든든한 한 끼를 제안합니다. 😊")
 
 # Gemini 모델 선택
 option = st.selectbox("🤖 사용할 Gemini 모델을 선택해주세요:",
@@ -189,11 +188,10 @@ conversational_rag_chain = RunnableWithMessageHistory(
     output_messages_key="answer",
 )
 
-
 # 초기 메시지 설정 및 기존 메시지 표시
 if not chat_history.messages:
     chat_history.messages.append({"role": "assistant", 
-                                 "content": "안녕하세요! 저는 국립부경대 도서관 규정 봇입니다. 🎓 규정에 대해 궁금한 점을 무엇이든 물어보세요! 😊"})
+                                 "content": "안녕하세요! MoodBite입니다. 😊 기분을 말해주시면 그에 맞는 음식을 추천해드릴게요!"})
                                  
 for msg in chat_history.messages:
     # LangChain의 message.type을 Streamlit의 role로 변환
@@ -202,9 +200,16 @@ for msg in chat_history.messages:
 
 
 # 사용자 입력 처리
-if prompt_message := st.chat_input("규정에 대해 질문해주세요."):
-    st.chat_message("user").write(prompt_message)
-    
+col1, col2 = st.columns([6, 2])
+
+with col1:
+    if prompt_message := st.chat_input("기분을 알려주세요!"):
+        st.chat_message("user").write(prompt_message)
+
+with col2:
+    if st.button("메뉴 정해주기"):
+        st.chat_message("assistant").write("음... 기분에 맞는 메뉴를 추천해드릴게요! 잠시만 기다려주세요. 🍴")
+
     with st.chat_message("assistant"):
         with st.spinner("답변을 생성 중입니다..."):
             config = {"configurable": {"session_id": "any"}}
